@@ -1,10 +1,97 @@
 import { NextResponse } from 'next/server'
 
 const NASA_API_KEY = process.env.NASA_API_KEY
+const NASA_BASE_URL = 'https://api.nasa.gov/neo/rest/v1'
 
 interface Message {
   role: 'user' | 'assistant'
   content: string
+}
+
+interface Asteroid {
+  id: string
+  name: string
+  designation?: string
+  diameter?: {
+    estimated_diameter_min: number
+    estimated_diameter_max: number
+  }
+  hazardous: boolean
+  url: string
+  absolute_magnitude_h?: number
+  close_approach_data?: Array<{
+    close_approach_date: string
+    relative_velocity?: {
+      kilometers_per_second: string
+    }
+    miss_distance?: {
+      kilometers: string
+    }
+  }>
+}
+
+async function fetchAsteroidData(query: string): Promise<Asteroid[]> {
+  try {
+    if (!NASA_API_KEY) {
+      throw new Error('NASA_API_KEY not configured')
+    }
+
+    // Check if query is a specific name/number or a general search
+    const browseUrl = `${NASA_BASE_URL}/neo/browse?api_key=${NASA_API_KEY}`
+    const browseResponse = await fetch(browseUrl)
+
+    if (!browseResponse.ok) {
+      throw new Error(`NASA API error: ${browseResponse.statusText}`)
+    }
+
+    const data = await browseResponse.json()
+    const neoObjects = data.near_earth_objects || []
+
+    // Filter results by search query
+    const filtered = neoObjects.filter((asteroid: Asteroid) =>
+      asteroid.name?.toLowerCase().includes(query.toLowerCase()) ||
+      asteroid.designation?.toLowerCase().includes(query.toLowerCase())
+    )
+
+    return filtered
+  } catch (error) {
+    console.error('Error fetching asteroid data:', error)
+    return []
+  }
+}
+
+function formatAsteroidDetails(asteroids: Asteroid[]): string {
+  if (asteroids.length === 0) {
+    return 'No asteroids found matching your query. Try searching for specific asteroid names or browse our database.'
+  }
+
+  let response = `Found ${asteroids.length} asteroid${asteroids.length !== 1 ? 's' : ''}:\n\n`
+
+  for (let i = 0; i < Math.min(asteroids.length, 3); i++) {
+    const ast = asteroids[i]
+    const diameterMin = ast.diameter?.estimated_diameter_min?.toFixed(2) || 'N/A'
+    const diameterMax = ast.diameter?.estimated_diameter_max?.toFixed(2) || 'N/A'
+    const hazardStatus = ast.hazardous ? '⚠️ POTENTIALLY HAZARDOUS' : '✓ Not hazardous'
+    const closeApproach = ast.close_approach_data?.[0]
+    const velocity = closeApproach?.relative_velocity?.kilometers_per_second || 'N/A'
+    const distance = closeApproach?.miss_distance?.kilometers || 'N/A'
+    const approachDate = closeApproach?.close_approach_date || 'N/A'
+
+    response += `**${ast.name}** (${ast.designation || 'No designation'})\n`
+    response += `• Status: ${hazardStatus}\n`
+    response += `• Size: ${diameterMin}m - ${diameterMax}m diameter\n`
+    response += `• Absolute Magnitude: ${ast.absolute_magnitude_h?.toFixed(2) || 'N/A'}\n`
+    response += `• Closest Approach Date: ${approachDate}\n`
+    response += `• Velocity: ${velocity} km/s\n`
+    response += `• Miss Distance: ${distance} km\n`
+    response += `• More info: ${ast.url || 'N/A'}\n\n`
+  }
+
+  if (asteroids.length > 3) {
+    response += `... and ${asteroids.length - 3} more asteroid${asteroids.length - 3 !== 1 ? 's' : ''} matching your search.`
+  }
+
+  return response
 }
 
 export async function POST(request: Request) {
@@ -15,43 +102,81 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No messages provided' }, { status: 400 })
     }
 
-    const lastMessage = messages[messages.length - 1].content.toLowerCase()
+    const lastMessage = messages[messages.length - 1].content
 
-    // Simple AI-like responses based on keywords
-    let response = ''
-
-    if (lastMessage.includes('hazard') || lastMessage.includes('risk')) {
-      response =
-        'Hazardous asteroids are tracked based on size and proximity to Earth. The NASA API identifies potentially hazardous NEOs (Near-Earth Objects) that are larger than 140 meters and come within 19.5 million km of Earth. I can help you analyze the current risk levels!'
-    } else if (lastMessage.includes('largest') || lastMessage.includes('biggest')) {
-      response =
-        'I can fetch data on the largest asteroids currently being tracked. The diameters are typically measured in meters, with some large NEOs reaching several kilometers in diameter. Would you like me to show you the current largest asteroids?'
-    } else if (lastMessage.includes('velocity') || lastMessage.includes('speed')) {
-      response =
-        'Asteroid velocities relative to Earth vary widely, typically ranging from 5 to 70 kilometers per second. These velocities are crucial for impact risk assessment and trajectory prediction. The exact speed depends on the asteroid\'s orbit and approach vector.'
-    } else if (lastMessage.includes('distance')) {
-      response =
-        'Distance measurements are in kilometers from Earth. The miss distance shows how close an asteroid passes to our planet. Some asteroids come within 400,000 km (closer than the Moon), while others stay much farther away.'
-    } else if (lastMessage.includes('hello') || lastMessage.includes('hi')) {
-      response =
-        'Hello! I\'m your Cosmic Watch assistant. I can help you understand asteroid data, explain NEO tracking, and answer questions about Near-Earth Objects. What would you like to know?'
-    } else if (lastMessage.includes('alert') || lastMessage.includes('notification')) {
-      response =
-        'The system monitors for potentially hazardous asteroids and generates alerts when high-risk objects are detected. You can customize alert thresholds in the Risk Analysis tab to focus on what matters most to you.'
-    } else if (lastMessage.includes('how') && lastMessage.includes('work')) {
-      response =
-        'Cosmic Watch uses NASA\'s Near-Earth Object API to fetch real-time data on asteroids. The system analyzes their size, velocity, and distance to Earth to assess risk levels. All data is updated continuously with the latest observations.'
-    } else {
-      response =
-        'I\'m here to help you understand asteroid data and NEO tracking. Feel free to ask me about hazardous asteroids, impact risks, asteroid sizes, velocities, or any other space-related questions. What interests you?'
+    // Check for greeting/help questions
+    if (
+      lastMessage.toLowerCase().includes('hello') ||
+      lastMessage.toLowerCase().includes('hi') ||
+      lastMessage.toLowerCase().includes('help')
+    ) {
+      const response =
+        'Hello! I\'m your Cosmic Watch assistant. I can help you with:\n\n' +
+        '• Search for specific asteroids (e.g., "Tell me about Apophis")\n' +
+        '• Explain asteroid characteristics (size, velocity, hazard level)\n' +
+        '• Discuss NEO tracking and impact risks\n' +
+        '• Analyze close approaches and distances\n\n' +
+        'What asteroid would you like to learn about?'
+      return NextResponse.json({ message: response })
     }
 
-    return NextResponse.json({
-      message: response,
-      timestamp: new Date().toISOString(),
-    })
+    // Check if it's asking about largest asteroids
+    if (lastMessage.toLowerCase().includes('largest') || lastMessage.toLowerCase().includes('biggest')) {
+      try {
+        const data = await fetchAsteroidData('')
+        const sorted = data.sort(
+          (a, b) => (b.diameter?.estimated_diameter_max || 0) - (a.diameter?.estimated_diameter_max || 0)
+        )
+        const largest = sorted.slice(0, 3)
+        const response = formatAsteroidDetails(largest)
+        return NextResponse.json({
+          message: `Here are the largest asteroids in our database:\n\n${response}`,
+        })
+      } catch (error) {
+        console.error('Error fetching largest asteroids:', error)
+      }
+    }
+
+    // Check if it's asking about hazardous asteroids
+    if (lastMessage.toLowerCase().includes('hazard') || lastMessage.toLowerCase().includes('risk')) {
+      try {
+        const data = await fetchAsteroidData('')
+        const hazardous = data.filter((ast) => ast.hazardous)
+        const response = formatAsteroidDetails(hazardous.slice(0, 3))
+        return NextResponse.json({
+          message: `Here are potentially hazardous asteroids:\n\n${response}`,
+        })
+      } catch (error) {
+        console.error('Error fetching hazardous asteroids:', error)
+      }
+    }
+
+    // Try to search for specific asteroid name
+    const searchQuery = lastMessage
+      .replace(/tell me about/i, '')
+      .replace(/search for/i, '')
+      .replace(/find/i, '')
+      .replace(/show me/i, '')
+      .trim()
+
+    if (searchQuery.length > 2) {
+      const asteroids = await fetchAsteroidData(searchQuery)
+      const response = formatAsteroidDetails(asteroids)
+      return NextResponse.json({ message: response })
+    }
+
+    // Default helpful response
+    const response =
+      'I can help you explore asteroid data! Try asking me:\n' +
+      '• "Tell me about [asteroid name]"\n' +
+      '• "Show the largest asteroids"\n' +
+      '• "What are the hazardous asteroids?"\n' +
+      '• "Search for Apophis"\n\n' +
+      'Or provide an asteroid name you\'d like to learn more about.'
+
+    return NextResponse.json({ message: response })
   } catch (error) {
     console.error('Chat Error:', error)
-    return NextResponse.json({ error: 'Failed to process message' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to process message', details: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
   }
 }

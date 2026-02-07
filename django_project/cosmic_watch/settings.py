@@ -4,6 +4,13 @@ Django settings for Cosmic Watch project.
 import os
 from pathlib import Path
 
+# Import for Railway DATABASE_URL support
+try:
+    import dj_database_url
+except ImportError:
+    dj_database_url = None
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-cosmic-watch-dev-key')
@@ -22,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'django_celery_beat',
     'django_celery_results',
@@ -60,16 +68,34 @@ TEMPLATES = [
 WSGI_APPLICATION = 'cosmic_watch.wsgi.application'
 ASGI_APPLICATION = 'cosmic_watch.asgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'cosmic_watch'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
+# Database Configuration
+# Railway PostgreSQL (Production) or Local Docker PostgreSQL (Development)
+if 'DATABASE_URL' in os.environ and dj_database_url:
+    # Railway or Heroku style DATABASE_URL
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=not DEBUG,
+        )
     }
-}
+else:
+    # Local or custom PostgreSQL with individual variables
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'cosmic_watch'),
+            'USER': os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+            'OPTIONS': {
+                'sslmode': os.environ.get('DB_SSL_MODE', 'prefer'),
+                'connect_timeout': 10,
+            },
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -79,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
@@ -102,17 +128,39 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 50,
 }
 
+# JWT Configuration
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,  # Disabled until blacklist tables are created
+    'UPDATE_LAST_LOGIN': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+}
+
 # CORS Configuration
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:8000').split(',')
 
 # Celery Configuration
-CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379')
-CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379')
+CELERY_BROKER_URL = os.environ["REDIS_URL"]
+CELERY_RESULT_BACKEND = os.environ["REDIS_URL"]
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
 
+# Redis Configuration
+REDIS_URL = os.environ.get("REDIS_URL")
 # NASA API Configuration
 NASA_API_KEY = os.environ.get('NASA_API_KEY', 'BtS3sRoAXOeRx0YS8M5EjFUYvblVAJd6CZy3mulD')
 NASA_BASE_URL = 'https://api.nasa.gov/neo/rest/v1'
@@ -130,7 +178,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('127.0.0.1', 6379)],
+            'hosts': ["redis://default:uGZZbzHURouQmJcMxoVTgnrRtFsqwhIW@shuttle.proxy.rlwy.net:27893"],
         },
     },
 }

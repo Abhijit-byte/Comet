@@ -193,6 +193,121 @@ Ensure your hosting provider supports:
 - Restart dev server
 - Clear browser cache (Ctrl+Shift+Delete)
 
+## API Testing with Postman
+
+### Import Collection
+
+1. **Open Postman**
+   - Launch the Postman desktop application or visit https://www.postman.com
+
+2. **Import Files**
+   - Click **Import** button in top-left
+   - Select `postman/CosmicWatch.postman_collection.json`
+   - Select `postman/CosmicWatch.postman_environment.json`
+   - Click **Import**
+
+3. **Select Environment**
+   - In the environment dropdown (top-right), select **Cosmic Watch - Development**
+
+### Quick Start - Authentication Flow
+
+1. **Login to Get Tokens**
+   - Navigate to **Authentication → Obtain Token (Login)**
+   - Click **Send**
+   - Tokens are automatically saved to environment variables
+   - Check console to see saved `access_token` and `refresh_token`
+
+2. **Test Authenticated Endpoint**
+   - Navigate to **Dashboard & Statistics → Get Dashboard Statistics**
+   - Click **Send**
+   - Response includes total asteroids and hazard metrics
+
+3. **Refresh Expired Token**
+   - Navigate to **Authentication → Refresh Access Token**
+   - Click **Send**
+   - New access token automatically saves
+
+### Endpoint Overview
+
+| Folder | Endpoint | Method | Description |
+|--------|----------|--------|-------------|
+| **Auth** | /api/auth/login/ | POST | Get JWT tokens |
+| | /api/auth/register/ | POST | Create new operator account |
+| | /api/auth/token/refresh/ | POST | Refresh expired access token |
+| | /api/auth/me/ | GET | Get current user profile |
+| | /api/auth/logout/ | POST | Terminate session |
+| **Asteroids** | /api/asteroids/ | GET | List all asteroids (paginated) |
+| | /api/asteroids/hazardous/ | GET | List hazardous asteroids |
+| | /api/asteroids/upcoming_approaches/ | GET | Asteroids approaching Earth |
+| **Dashboard** | /api/stats/ | GET | System statistics & metrics |
+| **Watched** | /api/watched-asteroids/ | GET | Get operator's watchlist |
+| | /api/watched-asteroids/ | POST | Add asteroid to watchlist |
+| **Alerts** | /api/alerts/config/ | GET | Get alert configuration |
+| | /api/alerts/config/ | PUT | Update alert thresholds |
+| **Notifications** | /api/notifications/ | GET | List recent notifications |
+
+### cURL Examples
+
+**Login and Get Tokens:**
+```bash
+curl -X POST http://localhost:8000/api/auth/login/ \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@cosmic.watch","password":"TestPass123"}'
+```
+
+**Get Asteroids (with Bearer Token):**
+```bash
+curl -X GET http://localhost:8000/api/asteroids/ \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+**Get Hazardous Asteroids:**
+```bash
+curl -X GET http://localhost:8000/api/asteroids/hazardous/ \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+**Get Dashboard Stats:**
+```bash
+curl -X GET http://localhost:8000/api/stats/ \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+**Refresh Token:**
+```bash
+curl -X POST http://localhost:8000/api/auth/token/refresh/ \
+  -H "Content-Type: application/json" \
+  -d '{"refresh":"YOUR_REFRESH_TOKEN"}'
+```
+
+### Test Credentials
+
+```
+Email: test@cosmic.watch
+Password: TestPass123
+```
+
+### Authentication Details
+
+- **Access Token**: 15-minute expiration
+- **Refresh Token**: 30-day expiration
+- **Method**: Bearer token in Authorization header
+- **Header Format**: `Authorization: Bearer {{access_token}}`
+
+### Test Scripts
+
+All endpoints include automated test scripts that:
+- ✅ Verify HTTP 200 status codes
+- ✅ Validate response JSON structure
+- ✅ Auto-save tokens to environment
+- ✅ Check for required object properties
+
+Run all tests:
+1. Open **Collection** (left sidebar)
+2. Click **▶ Run** button
+3. Select **Cosmic Watch - Development** environment
+4. Click **Run CosmicWatch**
+
 ## License
 
 MIT License - Use freely for personal and commercial projects

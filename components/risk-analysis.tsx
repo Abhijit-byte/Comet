@@ -1,11 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { AlertTriangle, Activity, TrendingUp } from 'lucide-react'
-import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts'
+import { AlertTriangle, Activity, TrendingUp, Target } from 'lucide-react'
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts'
 
 export default function RiskAnalysis() {
   const [stats, setStats] = useState<any>(null)
@@ -28,7 +25,7 @@ export default function RiskAnalysis() {
         setAsteroids(asteroidsData.asteroids || [])
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load analysis')
-        console.error('[v0] Risk analysis error:', err)
+        console.error('Risk analysis error:', err)
       } finally {
         setLoading(false)
       }
@@ -39,21 +36,25 @@ export default function RiskAnalysis() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Activity className="h-8 w-8 animate-spin text-blue-500" />
+      <div className="space-y-6">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="glass-sm h-32 rounded-xl shimmer" />
+        ))}
       </div>
     )
   }
 
   if (error) {
     return (
-      <Card className="border-red-800 bg-red-950">
-        <CardContent className="pt-6 text-red-200">{error}</CardContent>
-      </Card>
+      <div className="sci-fi-card border-red-500/50 bg-gradient-to-r from-red-950/40 to-red-900/20">
+        <div className="flex items-center gap-3">
+          <AlertTriangle className="h-6 w-6 text-red-400" />
+          <p className="text-red-300">{error}</p>
+        </div>
+      </div>
     )
   }
 
-  // Risk categorization
   const hazardousAsteroids = asteroids.filter((a) => a.hazardous)
   const closestApproaches = asteroids
     .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance))
@@ -63,8 +64,8 @@ export default function RiskAnalysis() {
     .slice(0, 5)
 
   const pieData = [
-    { name: 'Hazardous', value: stats?.hazardousCount || 0, color: '#ea580c' },
-    { name: 'Safe', value: stats?.safeCount || 0, color: '#16a34a' },
+    { name: 'Hazardous', value: stats?.hazardousCount || 0, color: '#ff6b35' },
+    { name: 'Safe', value: stats?.safeCount || 0, color: '#00d9ff' },
   ]
 
   const riskByVelocity = asteroids
@@ -74,165 +75,237 @@ export default function RiskAnalysis() {
       risk: Math.min(100, parseFloat(a.velocity) * 2),
     }))
 
+  const RiskCard = ({
+    icon: Icon,
+    label,
+    value,
+    subtitle,
+    gradient,
+    glow,
+  }: {
+    icon: React.ReactNode
+    label: string
+    value: string | number
+    subtitle: string
+    gradient: string
+    glow: string
+  }) => (
+    <div
+      className={`sci-fi-card neon-border p-6 ${gradient}`}
+      style={{ boxShadow: `0 0 20px ${glow}` }}
+    >
+      <div className="flex items-start justify-between">
+        <div className="p-3 rounded-lg bg-white/10 backdrop-blur-md border border-white/20">{Icon}</div>
+        <Target className="h-4 w-4 text-cyan-400/50" />
+      </div>
+      <div className="mt-4 space-y-2">
+        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{label}</p>
+        <div className="text-3xl font-bold text-white">{value}</div>
+        <p className="text-xs text-slate-400">{subtitle}</p>
+      </div>
+    </div>
+  )
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Risk Overview */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Card className="border-orange-800 bg-orange-950/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium text-orange-400">
-              <AlertTriangle className="h-4 w-4" />
-              Critical Risk
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-200">{hazardousAsteroids.length}</div>
-            <p className="text-xs text-orange-300">Potentially hazardous asteroids</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-yellow-800 bg-yellow-950/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium text-yellow-400">
-              <TrendingUp className="h-4 w-4" />
-              High Velocity
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-200">
-              {asteroids.filter((a) => parseFloat(a.velocity) > 50).length}
-            </div>
-            <p className="text-xs text-yellow-300">Asteroids moving above 50 km/s</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-red-800 bg-red-950/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-red-400">Very Close Pass</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-200">
-              {asteroids.filter((a) => parseFloat(a.distance) < 4000000).length}
-            </div>
-            <p className="text-xs text-red-300">Within 4 million km</p>
-          </CardContent>
-        </Card>
+      <div>
+        <h2 className="text-lg font-bold text-cyan-300 mb-4 uppercase tracking-wider">Threat Assessment</h2>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <RiskCard
+            icon={<AlertTriangle className="h-6 w-6 text-orange-400" />}
+            label="Critical Risk"
+            value={hazardousAsteroids.length}
+            subtitle="Potentially hazardous NEOs"
+            gradient="from-orange-950/40 to-red-900/20"
+            glow="rgba(255, 165, 0, 0.3)"
+          />
+          <RiskCard
+            icon={<TrendingUp className="h-6 w-6 text-yellow-400" />}
+            label="High Velocity"
+            value={asteroids.filter((a) => parseFloat(a.velocity) > 50).length}
+            subtitle="Moving > 50 km/s"
+            gradient="from-yellow-950/40 to-orange-900/20"
+            glow="rgba(234, 179, 8, 0.3)"
+          />
+          <RiskCard
+            icon={<Target className="h-6 w-6 text-red-400" />}
+            label="Close Passes"
+            value={asteroids.filter((a) => parseFloat(a.distance) < 4000000).length}
+            subtitle="Within 4M km"
+            gradient="from-red-950/40 to-pink-900/20"
+            glow="rgba(239, 68, 68, 0.3)"
+          />
+        </div>
       </div>
 
-      {/* Charts */}
+      {/* Charts Section */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card className="border-slate-700 bg-slate-800">
-          <CardHeader>
-            <CardTitle>Hazard Distribution</CardTitle>
-            <CardDescription>Safe vs Hazardous objects</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie data={pieData} cx="50%" cy="50%" labelLine={false} label={({ name, value }) => `${name}: ${value}`} outerRadius={80} fill="#8884d8" dataKey="value">
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        <div className="sci-fi-card neon-border">
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-cyan-300 uppercase tracking-wider">Hazard Distribution</h3>
+            <p className="text-xs text-slate-400 mt-1">Safe vs Hazardous Objects</p>
+          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie 
+                data={pieData} 
+                cx="50%" 
+                cy="50%" 
+                labelLine={false} 
+                label={({ name, value }) => `${name}: ${value}`} 
+                outerRadius={80} 
+                fill="#8884d8" 
+                dataKey="value"
+              >
+                {pieData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'rgba(10, 14, 39, 0.9)',
+                  border: '1px solid rgba(0, 217, 255, 0.3)',
+                  borderRadius: '8px',
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
 
-        <Card className="border-slate-700 bg-slate-800">
-          <CardHeader>
-            <CardTitle>Risk Score by Velocity</CardTitle>
-            <CardDescription>Impact risk assessment</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={riskByVelocity}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="name" stroke="#9ca3af" />
-                <YAxis stroke="#9ca3af" />
-                <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none' }} />
-                <Bar dataKey="risk" fill="#ef4444" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        <div className="sci-fi-card neon-border">
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-violet-300 uppercase tracking-wider">Risk Score</h3>
+            <p className="text-xs text-slate-400 mt-1">Impact Risk Assessment</p>
+          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={riskByVelocity}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(139, 92, 246, 0.1)" />
+              <XAxis dataKey="name" stroke="#64748b" />
+              <YAxis stroke="#64748b" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'rgba(10, 14, 39, 0.9)',
+                  border: '1px solid rgba(139, 92, 246, 0.3)',
+                  borderRadius: '8px',
+                }}
+              />
+              <Bar dataKey="risk" fill="#ff6b35" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* Closest Approaches */}
-      <Card className="border-slate-700 bg-slate-800">
-        <CardHeader>
-          <CardTitle>Closest Approaches</CardTitle>
-          <CardDescription>Five nearest asteroids to Earth</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="sci-fi-card neon-border">
+        <div className="mb-6">
+          <h3 className="text-lg font-bold text-cyan-300 uppercase tracking-wider">Closest Approaches</h3>
+          <p className="text-xs text-slate-400 mt-1">Five nearest asteroids to Earth</p>
+        </div>
+        <div className="space-y-4">
           {closestApproaches.map((asteroid, idx) => (
-            <div key={idx} className="space-y-2 border-b border-slate-700 pb-3 last:border-0">
-              <div className="flex items-center justify-between">
+            <div key={idx} className="glass-sm neon-border p-4 rounded-lg group hover:bg-cyan-500/5 transition-colors">
+              <div className="flex items-center justify-between mb-3">
                 <div>
-                  <p className="font-semibold text-white">{asteroid.name}</p>
-                  <p className="text-xs text-slate-400">Closest approach: {asteroid.date?.split('T')[0]}</p>
+                  <p className="font-bold text-cyan-300">{asteroid.name}</p>
+                  <p className="text-xs text-cyan-400/60 font-mono">Approach: {asteroid.date?.split('T')[0]}</p>
                 </div>
-                {asteroid.hazardous && <Badge className="bg-orange-600">Hazardous</Badge>}
+                {asteroid.hazardous && (
+                  <span className="px-2 py-1 rounded bg-orange-500/30 border border-orange-500/50 text-orange-300 text-xs font-bold uppercase">
+                    HAZARD
+                  </span>
+                )}
               </div>
-              <div className="flex items-center gap-4 text-sm">
-                <div>
-                  <span className="text-slate-400">Distance: </span>
-                  <span className="font-semibold text-white">{(parseFloat(asteroid.distance) / 1000000).toFixed(2)}M km</span>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-cyan-400/70 font-mono min-w-fit">
+                  {(parseFloat(asteroid.distance) / 1000000).toFixed(2)}M km
+                </span>
+                <div className="flex-1 h-1 bg-cyan-500/20 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-cyan-500 to-blue-500"
+                    style={{
+                      width: `${Math.max(0, Math.min(100, (parseFloat(asteroid.distance) / 100000000) * 100))}%`,
+                    }}
+                  />
                 </div>
-                <Progress value={Math.max(0, Math.min(100, (parseFloat(asteroid.distance) / 100000000) * 100))} className="flex-1" />
               </div>
             </div>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Largest Asteroids */}
-      <Card className="border-slate-700 bg-slate-800">
-        <CardHeader>
-          <CardTitle>Largest Asteroids</CardTitle>
-          <CardDescription>Five biggest objects tracked</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="sci-fi-card neon-border">
+        <div className="mb-6">
+          <h3 className="text-lg font-bold text-violet-300 uppercase tracking-wider">Largest Asteroids</h3>
+          <p className="text-xs text-slate-400 mt-1">Five biggest objects tracked</p>
+        </div>
+        <div className="space-y-4">
           {largestAsteroids.map((asteroid, idx) => (
-            <div key={idx} className="space-y-2 border-b border-slate-700 pb-3 last:border-0">
-              <div className="flex items-center justify-between">
+            <div key={idx} className="glass-sm neon-border-purple p-4 rounded-lg group hover:bg-violet-500/5 transition-colors">
+              <div className="flex items-center justify-between mb-3">
                 <div>
-                  <p className="font-semibold text-white">{asteroid.name}</p>
-                  <p className="text-xs text-slate-400">Diameter: {(asteroid.diameter?.estimated_diameter_max || 0).toFixed(1)}m</p>
+                  <p className="font-bold text-violet-300">{asteroid.name}</p>
+                  <p className="text-xs text-violet-400/60 font-mono">
+                    Diameter: {(asteroid.diameter?.estimated_diameter_max || 0).toFixed(1)}m
+                  </p>
                 </div>
-                {asteroid.hazardous && <Badge className="bg-orange-600">Hazardous</Badge>}
+                {asteroid.hazardous && (
+                  <span className="px-2 py-1 rounded bg-orange-500/30 border border-orange-500/50 text-orange-300 text-xs font-bold uppercase">
+                    HAZARD
+                  </span>
+                )}
               </div>
-              <Progress value={Math.min(100, (asteroid.diameter?.estimated_diameter_max || 0) / 10)} className="flex-1" />
+              <div className="flex-1 h-1 bg-violet-500/20 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-violet-500 to-purple-500"
+                  style={{
+                    width: `${Math.min(100, (asteroid.diameter?.estimated_diameter_max || 0) / 10)}%`,
+                  }}
+                />
+              </div>
             </div>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Risk Assessment Legend */}
-      <Card className="border-slate-700 bg-slate-800">
-        <CardHeader>
-          <CardTitle>Risk Assessment Criteria</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm">
-          <div className="flex items-center gap-3">
-            <div className="h-4 w-4 rounded bg-orange-600" />
-            <span className="text-slate-300">Potentially Hazardous: Larger than 140m with close approach within 19.5M km</span>
+      {/* Risk Legend */}
+      <div className="sci-fi-card neon-border">
+        <div className="mb-6">
+          <h3 className="text-lg font-bold text-cyan-300 uppercase tracking-wider">Risk Criteria</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="glass-sm p-3 rounded border border-orange-500/20">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-3 w-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500" />
+              <span className="text-xs font-bold text-orange-300 uppercase">HAZARDOUS</span>
+            </div>
+            <p className="text-xs text-slate-400">Larger than 140m with close approach within 19.5M km</p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="h-4 w-4 rounded bg-yellow-600" />
-            <span className="text-slate-300">High Velocity: Objects moving faster than 50 km/s</span>
+          <div className="glass-sm p-3 rounded border border-yellow-500/20">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-3 w-3 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500" />
+              <span className="text-xs font-bold text-yellow-300 uppercase">HIGH VELOCITY</span>
+            </div>
+            <p className="text-xs text-slate-400">Objects moving faster than 50 km/s</p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="h-4 w-4 rounded bg-red-600" />
-            <span className="text-slate-300">Very Close Pass: Closer than 4 million kilometers</span>
+          <div className="glass-sm p-3 rounded border border-red-500/20">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-3 w-3 rounded-full bg-gradient-to-r from-red-500 to-pink-500" />
+              <span className="text-xs font-bold text-red-300 uppercase">VERY CLOSE</span>
+            </div>
+            <p className="text-xs text-slate-400">Closer than 4 million kilometers</p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="h-4 w-4 rounded bg-green-600" />
-            <span className="text-slate-300">Safe: Non-hazardous objects tracked for monitoring</span>
+          <div className="glass-sm p-3 rounded border border-green-500/20">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-3 w-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-500" />
+              <span className="text-xs font-bold text-green-300 uppercase">SAFE</span>
+            </div>
+            <p className="text-xs text-slate-400">Non-hazardous objects monitored</p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }
+

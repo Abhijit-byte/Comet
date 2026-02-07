@@ -7,6 +7,14 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import timedelta
 from django.utils import timezone
 
+# Import JWT token models
+from .jwt_models import (
+    RefreshToken,
+    AccessToken, 
+    LoginSession,
+    UserProfile
+)
+
 
 class Asteroid(models.Model):
     """Model to store asteroid data from NASA API."""

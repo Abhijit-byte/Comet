@@ -1,0 +1,725 @@
+{
+  "info": {
+    "name": "Cosmic Watch - NEO Command Center API",
+    "description": "Complete API collection for Cosmic Watch NEO tracking system. Enterprise-grade asteroid monitoring and threat analysis.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "27595441"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "description": "JWT Token Authentication Endpoints",
+      "item": [
+        {
+          "name": "Obtain Token (Login)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "    pm.test('Token saved successfully', function() {",
+                  "        pm.expect(jsonData.access).to.be.a('string');",
+                  "        pm.expect(jsonData.refresh).to.be.a('string');",
+                  "    });",
+                  "} else {",
+                  "    pm.test('Login failed', function() {",
+                  "        pm.expect(pm.response.code).to.equal(200);",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@cosmic.watch\",\n  \"password\": \"TestPass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login", ""]
+            },
+            "description": "Authenticate with email and password to obtain JWT tokens"
+          },
+          "response": []
+        },
+        {
+          "name": "Register New Operator",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "    pm.test('Registration and auto-login successful', function() {",
+                  "        pm.expect(jsonData.user).to.be.an('object');",
+                  "        pm.expect(jsonData.access).to.be.a('string');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newoperator\",\n  \"email\": \"operator@cosmic.watch\",\n  \"password\": \"SecurePass123\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Operator\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register", ""]
+            },
+            "description": "Register a new operator account and receive JWT tokens"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Access Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.test('Token refreshed successfully', function() {",
+                  "        pm.expect(jsonData.access).to.be.a('string');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/token/refresh/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "token", "refresh", ""]
+            },
+            "description": "Refresh expired access token using valid refresh token"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('User profile returned', function() {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('email');",
+                  "    pm.expect(jsonData).to.have.property('username');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me", ""]
+            },
+            "description": "Retrieve current authenticated user's profile information"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout (Terminate Session)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "});",
+                  "",
+                  "pm.test('Session terminated successfully', function() {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.detail).to.include('SESSION');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "logout", ""]
+            },
+            "description": "Logout and terminate the current session (blacklist refresh token)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Asteroids",
+      "description": "NEO Asteroid Data Endpoints",
+      "item": [
+        {
+          "name": "List All Asteroids",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Asteroids array returned', function() {",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Asteroid objects have required fields', function() {",
+                  "    if (jsonData.length > 0) {",
+                  "        pm.expect(jsonData[0]).to.have.property('name');",
+                  "        pm.expect(jsonData[0]).to.have.property('diameter');",
+                  "        pm.expect(jsonData[0]).to.have.property('is_potentially_hazardous');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/asteroids/?page=1&page_size=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "asteroids", ""],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Retrieve paginated list of all tracked asteroids with basic information"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Hazardous Asteroids",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Hazardous asteroids array returned', function() {",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('All returned asteroids are hazardous', function() {",
+                  "    if (jsonData.length > 0) {",
+                  "        for (var i = 0; i < jsonData.length; i++) {",
+                  "            pm.expect(jsonData[i].is_potentially_hazardous).to.equal(true);",
+                  "        }",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/asteroids/hazardous/?page=1&page_size=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "asteroids", "hazardous", ""],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Retrieve list of potentially hazardous asteroids with elevated threat levels"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Upcoming Approaches",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Upcoming approaches array returned', function() {",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Approaches have approach dates', function() {",
+                  "    if (jsonData.length > 0) {",
+                  "        pm.expect(jsonData[0]).to.have.property('close_approach_date');",
+                  "        pm.expect(jsonData[0]).to.have.property('miss_distance_km');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/asteroids/upcoming_approaches/?page=1&page_size=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "asteroids", "upcoming_approaches", ""],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Retrieve list of asteroids with upcoming close approaches to Earth in next 30 days"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard & Statistics",
+      "description": "System Dashboard and Analytics Endpoints",
+      "item": [
+        {
+          "name": "Get Dashboard Statistics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Dashboard stats object contains key metrics', function() {",
+                  "    pm.expect(jsonData).to.have.property('total_asteroids_tracked');",
+                  "    pm.expect(jsonData).to.have.property('hazardous_asteroids_count');",
+                  "    pm.expect(jsonData).to.have.property('last_updated');",
+                  "});",
+                  "",
+                  "pm.test('Statistics are numeric', function() {",
+                  "    pm.expect(jsonData.total_asteroids_tracked).to.be.a('number');",
+                  "    pm.expect(jsonData.hazardous_asteroids_count).to.be.a('number');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/stats/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "stats", ""]
+            },
+            "description": "Retrieve comprehensive dashboard statistics including threat metrics and tracking data"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Watched Asteroids",
+      "description": "User's Watched Asteroids Watchlist Management",
+      "item": [
+        {
+          "name": "Get Watched Asteroids",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Watched asteroids array returned', function() {",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/watched-asteroids/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "watched-asteroids", ""]
+            },
+            "description": "Retrieve list of asteroids being watched by the current operator"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Asteroid to Watchlist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 or 200', function() {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Watched asteroid object returned', function() {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('asteroid');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"asteroid_name\": \"99942 Apophis\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/watched-asteroids/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "watched-asteroids", ""]
+            },
+            "description": "Add an asteroid to the current operator's watchlist for monitoring"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Alerts Configuration",
+      "description": "System Alert Settings and Thresholds",
+      "item": [
+        {
+          "name": "Get Alert Configuration",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/alerts/config/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "alerts", "config", ""]
+            },
+            "description": "Retrieve current alert configuration and notification thresholds"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Alert Configuration",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alert_on_hazardous\": true,\n  \"alert_on_close_approach\": true,\n  \"distance_threshold_km\": 5000000,\n  \"email_notifications\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/alerts/config/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "alerts", "config", ""]
+            },
+            "description": "Update alert configuration with new threshold values and notification preferences"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "description": "System Notifications and Alerts",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/notifications/?page=1&page_size=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "notifications", ""],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Retrieve paginated list of recent notifications and system alerts"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
