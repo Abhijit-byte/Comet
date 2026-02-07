@@ -1,0 +1,126 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: cosmic_watch_db
+    environment:
+      POSTGRES_DB: cosmic_watch
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cosmic_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: cosmic_watch_redis
+    command: redis-server --appendonly yes --requirepass redis_password
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cosmic_network
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cosmic_watch_web
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn cosmic_watch.wsgi:application --bind 0.0.0.0:8000 --workers 4"
+    environment:
+      DEBUG: "False"
+      SECRET_KEY: django-insecure-cosmic-watch-dev-key
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      DB_NAME: cosmic_watch
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      CELERY_BROKER_URL: redis://:redis_password@redis:6379/0
+      CELERY_RESULT_BACKEND: redis://:redis_password@redis:6379/0
+    ports:
+      - "8000:8000"
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - cosmic_network
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cosmic_watch_celery
+    command: celery -A cosmic_watch worker -l info --concurrency=4
+    environment:
+      DB_NAME: cosmic_watch
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      CELERY_BROKER_URL: redis://:redis_password@redis:6379/0
+      CELERY_RESULT_BACKEND: redis://:redis_password@redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      web:
+        condition: service_started
+    networks:
+      - cosmic_network
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cosmic_watch_beat
+    command: celery -A cosmic_watch beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    environment:
+      DB_NAME: cosmic_watch
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      CELERY_BROKER_URL: redis://:redis_password@redis:6379/0
+      CELERY_RESULT_BACKEND: redis://:redis_password@redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      web:
+        condition: service_started
+    networks:
+      - cosmic_network
+
+volumes:
+  postgres_data:
+  redis_data:
+  static_volume:
+  media_volume:
+
+networks:
+  cosmic_network:
+    driver: bridge
