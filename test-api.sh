@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Cosmic Watch API Testing Script
+# CosmosTrace API Testing Script
 # Complete test suite for all Next.js API endpoints
 # Run: ./test-api.sh
 
@@ -14,7 +14,7 @@ RED='\033[0;31m'
 GRAY='\033[0;90m'
 NC='\033[0m' # No Color
 
-echo -e "${CYAN}🌌 Cosmic Watch API Testing Suite${NC}"
+echo -e "${CYAN}🌌 CosmosTrace API Testing Suite${NC}"
 echo -e "${CYAN}=================================${NC}"
 echo ""
 

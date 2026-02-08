@@ -1,6 +1,6 @@
-# Cosmic Watch - Credentials Storage & Authentication Flow
+# CosmosTrace - Credentials Storage & Authentication Flow
 
-Complete guide to how user credentials are stored and managed in Cosmic Watch.
+Complete guide to how user credentials are stored and managed in CosmosTrace.
 
 ---
 

@@ -1,8 +1,8 @@
-# Cosmic Watch API Testing Script - Windows PowerShell
+# CosmosTrace API Testing Script - Windows PowerShell
 # Complete test suite for all Next.js API endpoints
 # Run: .\test-api.ps1
 
-Write-Host "Cosmic Watch API Testing Suite" -ForegroundColor Cyan
+Write-Host "CosmosTrace API Testing Suite" -ForegroundColor Cyan
 Write-Host "=================================" -ForegroundColor Cyan
 Write-Host ""
 

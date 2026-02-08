@@ -1,8 +1,8 @@
-# Cosmic Watch Architecture
+# CosmosTrace Architecture
 
 ## System Overview
 
-Cosmic Watch is a distributed, scalable Django application for monitoring Near-Earth Objects (NEOs). The system architecture supports real-time data fetching, user alerts, notifications, and a modern REST API.
+CosmosTrace is a distributed, scalable Django application for monitoring Near-Earth Objects (NEOs). The system architecture supports real-time data fetching, user alerts, notifications, and a modern REST API.
 
 ## Architecture Diagram
 

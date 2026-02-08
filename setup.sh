@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Cosmic Watch Django Setup Script
+# CosmosTrace Django Setup Script
 # This script automates the initial setup and deployment
 
 set -e
 
 echo "=========================================="
-echo "Cosmic Watch Django Setup"
+echo "CosmosTrace Django Setup"
 echo "=========================================="
 echo ""
 

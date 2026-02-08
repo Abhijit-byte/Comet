@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Cosmic Watch - Database Migration Script (Linux/Mac)
+# CosmosTrace - Database Migration Script (Linux/Mac)
 # Run this script to create migrations for new JWT models and migrate database
 
 echo "========================================"
-echo "  Cosmic Watch - Database Migration  "
+echo "  CosmosTrace - Database Migration  "
 echo "========================================"
 echo ""
 

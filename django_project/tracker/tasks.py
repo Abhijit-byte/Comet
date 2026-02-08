@@ -1,5 +1,5 @@
 """
-Celery tasks for Cosmic Watch application.
+Celery tasks for CosmosTrace application.
 Handles periodic data fetching, alerts, and notifications.
 """
 import requests

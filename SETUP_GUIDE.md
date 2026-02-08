@@ -1,4 +1,4 @@
-# Cosmic Watch Setup & Verification Guide
+# CosmosTrace Setup & Verification Guide
 
 ## Quick Start Checklist
 

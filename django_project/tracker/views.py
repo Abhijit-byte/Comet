@@ -1,5 +1,5 @@
 """
-API Views for Cosmic Watch application.
+API Views for CosmosTrace application.
 """
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action

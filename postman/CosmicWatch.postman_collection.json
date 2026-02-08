@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Cosmic Watch - NEO Command Center API",
-    "description": "Complete API collection for Cosmic Watch NEO tracking system. Enterprise-grade asteroid monitoring and threat analysis.",
+    "name": "CosmosTrace - NEO Command Center API",
+    "description": "Complete API collection for CosmosTrace NEO tracking system. Enterprise-grade asteroid monitoring and threat analysis.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "27595441"
   },

@@ -11,7 +11,7 @@ const _geist = Geist({ subsets: ['latin'] })
 const _geistMono = Geist_Mono({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Cosmic Watch - NEO Command Center',
+  title: 'CosmosTrace - NEO Command Center',
   description: 'Enterprise-grade NEO monitoring system - Real-time asteroid tracking and risk analysis from NASA',
   generator: 'v0.app',
 }

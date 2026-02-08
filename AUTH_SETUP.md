@@ -155,4 +155,4 @@ Use the superuser credentials you created, OR create a new user through the regi
 
 ## ✨ All auth is now fully functional!
 
-Try visiting any protected route - you'll be redirected to the tacticallogin page. After authentication, you'll have full access to the Cosmic Watch NEO tracking system!
+Try visiting any protected route - you'll be redirected to the tacticallogin page. After authentication, you'll have full access to the CosmosTrace NEO tracking system!

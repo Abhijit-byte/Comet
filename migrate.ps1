@@ -1,8 +1,8 @@
-# Cosmic Watch - Database Migration Script
+# CosmosTrace - Database Migration Script
 # Run this script to create migrations for new JWT models and migrate database
 
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  Cosmic Watch - Database Migration  " -ForegroundColor Cyan
+Write-Host "  CosmosTrace - Database Migration  " -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 

@@ -5,9 +5,13 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 
-export default function RegisterPage() {
+const RegisterPage = () => {
   const router = useRouter();
   const { register: setAuthUser } = useAuth();
+  
+  // Intro state
+  const [showIntro, setShowIntro] = useState(true);
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -33,6 +37,10 @@ export default function RegisterPage() {
     "SECURE_CHANNEL_OPEN",
     "REGISTRATION_STANDBY"
   ];
+  
+  // Update theme colors to match login (Cyan)
+  const themeColor = '#06b6d4'; 
+  const themeColorRgba = '6,182,212';
 
   useEffect(() => {
     const feedInterval = setInterval(() => {
@@ -136,6 +144,7 @@ export default function RegisterPage() {
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-[#050505]">
+      {/* Video Background */}
       <video 
         className="fixed inset-0 w-full h-full object-cover opacity-70"
         autoPlay 
@@ -144,7 +153,7 @@ export default function RegisterPage() {
         playsInline
         style={{ filter: 'contrast(1.1) brightness(0.8)' }}
       >
-        <source src="/k.mp4" type="video/mp4" />
+        <source src="/media/15562120-hd_1920_1080_24fps.mp4" type="video/mp4" />
       </video>
 
       <div 
@@ -157,30 +166,56 @@ export default function RegisterPage() {
         }}
       />
 
+      {/* Main Container */}
       <div className="relative w-full h-full flex items-center justify-center z-10 py-8 overflow-y-auto">
         
+        {showIntro ? (
+          <div className="flex flex-col items-center justify-center z-20">
+             <h1 
+              className="font-black text-6xl md:text-8xl mb-8 tracking-tighter text-[#06b6d4] opacity-0 animate-[fadeUp_1.2s_ease-out_forwards]"
+              style={{ 
+                fontFamily: 'Orbitron, sans-serif',
+                textShadow: '0 0 20px rgba(6, 182, 212, 0.6), 2px 2px 4px rgba(0, 0, 0, 0.9)'
+              }}
+            >
+              COSMOSTRACE
+            </h1>
+            
+            <button
+              onClick={() => setShowIntro(false)}
+              className="px-8 py-3 bg-[rgba(6,182,212,0.1)] border border-[#06b6d4] text-[#06b6d4] font-mono text-lg tracking-[0.2em] uppercase hover:bg-[#06b6d4] hover:text-black transition-all duration-300 opacity-0 animate-[fadeUp_1.2s_ease-out_0.5s_forwards]"
+              style={{
+                boxShadow: '0 0 15px rgba(6, 182, 212, 0.2)'
+              }}
+            >
+              Initialize Registration
+            </button>
+          </div>
+        ) : (
         <main className="auth-panel relative w-full max-w-[520px] bg-[rgba(5,5,8,0.35)] border border-[rgba(255,184,0,0.3)] border-t-2 border-b-2 border-t-[#ffb800] border-b-[#ffb800] p-12 my-8 shadow-[0_0_40px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(0,0,0,0.2)] animate-[bootUp_0.8s_cubic-bezier(0.2,0.8,0.2,1)] transition-all duration-300 hover:shadow-[0_0_60px_rgba(255,157,0,0.2),inset_0_0_30px_rgba(255,157,0,0.1)] hover:border-[rgba(255,157,0,0.8)]">
+          {/* ... existing main content ... */}
           
-          <div className="absolute -top-0.5 -left-0.5 w-[10px] h-[10px] border-2 border-[#ffb800] border-r-0 border-b-0 transition-all duration-300 hover:w-5 hover:h-5" />
-          <div className="absolute -bottom-0.5 -right-0.5 w-[10px] h-[10px] border-2 border-[#ffb800] border-l-0 border-t-0 transition-all duration-300 hover:w-5 hover:h-5" />
+          <div className="absolute -top-0.5 -left-0.5 w-[10px] h-[10px] border-2 border-[#06b6d4] border-r-0 border-b-0 transition-all duration-300 hover:w-5 hover:h-5" />
+          <div className="absolute -bottom-0.5 -right-0.5 w-[10px] h-[10px] border-2 border-[#06b6d4] border-l-0 border-t-0 transition-all duration-300 hover:w-5 hover:h-5" />
+
 
           <header className="mb-8 text-center">
             <div className="flex items-center justify-center space-x-3 mb-4">
-              <span className="border border-[#ffb800] px-2 py-0.5 text-[10px] font-mono animate-[flicker_3s_infinite]">
+              <span className="border border-[#06b6d4] px-2 py-0.5 text-[10px] font-mono animate-[flicker_3s_infinite]">
                 NEW_OPERATOR
               </span>
               <span className="text-[10px] tracking-[0.3em] opacity-60">CLEARANCE_REQUEST</span>
             </div>
             <h1 
-              className="font-black text-5xl mb-1 tracking-tighter text-[#ffb800]"
+              className="font-black text-5xl mb-1 tracking-tighter text-[#06b6d4]"
               style={{ 
                 fontFamily: 'Orbitron, sans-serif',
-                textShadow: '0 0 8px rgba(255, 184, 0, 0.8), 1px 1px 2px rgba(0, 0, 0, 0.9)'
+                textShadow: '0 0 8px rgba(6, 182, 212, 0.8), 1px 1px 2px rgba(0, 0, 0, 0.9)'
               }}
             >
-              COSMIC_WATCH
+              COSMOSTRACE
             </h1>
-            <div className="h-px bg-amber-500/30 w-1/2 mx-auto my-3" />
+            <div className="h-px bg-cyan-500/30 w-1/2 mx-auto my-3" />
             <p className="text-xs opacity-70 uppercase tracking-[0.2em]">Operator Registration Protocol</p>
           </header>
 
@@ -192,7 +227,7 @@ export default function RegisterPage() {
                   type="text"
                   value={formData.firstName}
                   onChange={(e) => handleChange('firstName', e.target.value)}
-                  className="cmd-input w-full bg-black/70 border border-[rgba(255,184,0,0.3)] text-white p-3 font-mono text-sm tracking-wide font-medium outline-none transition-all duration-300 focus:border-[#ffb800] focus:shadow-[0_0_20px_rgba(255,184,0,0.5)] focus:bg-[rgba(255,157,0,0.05)]"
+                  className="cmd-input w-full bg-black/70 border border-[rgba(6,182,212,0.3)] text-white p-3 font-mono text-sm tracking-wide font-medium outline-none transition-all duration-300 focus:border-[#06b6d4] focus:shadow-[0_0_20px_rgba(6,182,212,0.5)] focus:bg-[rgba(6,182,212,0.05)]"
                   placeholder="JOHN"
                   disabled={isLoading}
                 />
@@ -204,7 +239,7 @@ export default function RegisterPage() {
                   type="text"
                   value={formData.lastName}
                   onChange={(e) => handleChange('lastName', e.target.value)}
-                  className="cmd-input w-full bg-black/70 border border-[rgba(255,184,0,0.3)] text-white p-3 font-mono text-sm tracking-wide font-medium outline-none transition-all duration-300 focus:border-[#ffb800] focus:shadow-[0_0_20px_rgba(255,184,0,0.5)] focus:bg-[rgba(255,157,0,0.05)]"
+                  className="cmd-input w-full bg-black/70 border border-[rgba(6,182,212,0.3)] text-white p-3 font-mono text-sm tracking-wide font-medium outline-none transition-all duration-300 focus:border-[#06b6d4] focus:shadow-[0_0_20px_rgba(6,182,212,0.5)] focus:bg-[rgba(6,182,212,0.05)]"
                   placeholder="DOE"
                   disabled={isLoading}
                 />
@@ -217,7 +252,7 @@ export default function RegisterPage() {
                 type="text"
                 value={formData.username}
                 onChange={(e) => handleChange('username', e.target.value)}
-                className="cmd-input w-full bg-black/70 border border-[rgba(255,184,0,0.3)] text-white p-3 font-mono text-sm tracking-wide font-medium outline-none transition-all duration-300 focus:border-[#ffb800] focus:shadow-[0_0_20px_rgba(255,184,0,0.5)] focus:bg-[rgba(255,157,0,0.05)]"
+                className="cmd-input w-full bg-black/70 border border-[rgba(6,182,212,0.3)] text-white p-3 font-mono text-sm tracking-wide font-medium outline-none transition-all duration-300 focus:border-[#06b6d4] focus:shadow-[0_0_20px_rgba(6,182,212,0.5)] focus:bg-[rgba(6,182,212,0.05)]"
                 placeholder="UNIQUE_CALLSIGN"
                 required
                 disabled={isLoading}
@@ -230,7 +265,7 @@ export default function RegisterPage() {
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleChange('email', e.target.value)}
-                className="cmd-input w-full bg-black/70 border border-[rgba(255,184,0,0.3)] text-white p-3 font-mono text-sm tracking-wide font-medium outline-none transition-all duration-300 focus:border-[#ffb800] focus:shadow-[0_0_20px_rgba(255,184,0,0.5)] focus:bg-[rgba(255,157,0,0.05)]"
+                className="cmd-input w-full bg-black/70 border border-[rgba(6,182,212,0.3)] text-white p-3 font-mono text-sm tracking-wide font-medium outline-none transition-all duration-300 focus:border-[#06b6d4] focus:shadow-[0_0_20px_rgba(6,182,212,0.5)] focus:bg-[rgba(6,182,212,0.05)]"
                 placeholder="operator@cosmic.watch"
                 required
                 disabled={isLoading}
@@ -243,7 +278,7 @@ export default function RegisterPage() {
                 type="password"
                 value={formData.password}
                 onChange={(e) => handleChange('password', e.target.value)}
-                className="cmd-input w-full bg-black/70 border border-[rgba(255,184,0,0.3)] text-white p-3 font-mono text-sm tracking-wide font-medium outline-none transition-all duration-300 focus:border-[#ffb800] focus:shadow-[0_0_20px_rgba(255,184,0,0.5)] focus:bg-[rgba(255,157,0,0.05)]"
+                className="cmd-input w-full bg-black/70 border border-[rgba(6,182,212,0.3)] text-white p-3 font-mono text-sm tracking-wide font-medium outline-none transition-all duration-300 focus:border-[#06b6d4] focus:shadow-[0_0_20px_rgba(6,182,212,0.5)] focus:bg-[rgba(6,182,212,0.05)]"
                 placeholder="••••••••"
                 required
                 disabled={isLoading}
@@ -256,7 +291,7 @@ export default function RegisterPage() {
                 type="password"
                 value={formData.confirmPassword}
                 onChange={(e) => handleChange('confirmPassword', e.target.value)}
-                className="cmd-input w-full bg-black/70 border border-[rgba(255,184,0,0.3)] text-white p-3 font-mono text-sm tracking-wide font-medium outline-none transition-all duration-300 focus:border-[#ffb800] focus:shadow-[0_0_20px_rgba(255,184,0,0.5)] focus:bg-[rgba(255,157,0,0.05)]"
+                className="cmd-input w-full bg-black/70 border border-[rgba(6,182,212,0.3)] text-white p-3 font-mono text-sm tracking-wide font-medium outline-none transition-all duration-300 focus:border-[#06b6d4] focus:shadow-[0_0_20px_rgba(6,182,212,0.5)] focus:bg-[rgba(6,182,212,0.05)]"
                 placeholder="••••••••"
                 required
                 disabled={isLoading}
@@ -272,7 +307,7 @@ export default function RegisterPage() {
             <button 
               type="submit"
               disabled={isLoading}
-              className="cmd-btn w-full bg-[#ffb800] text-black p-4 font-black uppercase tracking-wide text-[13px] transition-all duration-300 hover:brightness-125 hover:shadow-[0_0_20px_rgba(255,184,0,0.3)] hover:translate-y-[-1px] cursor-pointer border-none mt-4 disabled:opacity-50 disabled:cursor-wait"
+              className="cmd-btn w-full bg-[#06b6d4] text-black p-4 font-black uppercase tracking-wide text-[13px] transition-all duration-300 hover:brightness-125 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:translate-y-[-1px] cursor-pointer border-none mt-4 disabled:opacity-50 disabled:cursor-wait"
               style={{
                 clipPath: 'polygon(0 0, 95% 0, 100% 25%, 100% 100%, 5% 100%, 0 75%)'
               }}
@@ -285,10 +320,10 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <footer className="mt-6 pt-4 border-t border-amber-500/10 text-center">
+          <footer className="mt-6 pt-4 border-t border-cyan-500/10 text-center">
             <p className="text-[9px] opacity-60 uppercase tracking-widest mb-3">
               Already authorized?{' '}
-              <Link href="/login" className="text-amber-400 hover:text-amber-300 transition-colors underline">
+              <Link href="/login" className="text-cyan-400 hover:text-cyan-300 transition-colors underline">
                 INITIATE_LOGIN
               </Link>
             </p>
@@ -297,17 +332,18 @@ export default function RegisterPage() {
             </p>
           </footer>
         </main>
+        )}
 
         {/* HUD Elements */}
-        <div className="absolute top-10 right-10 w-[140px] h-[140px] border border-[rgba(255,184,0,0.3)] rounded-full bg-black/30 backdrop-blur-sm pointer-events-none z-15">
+        <div className="absolute top-10 right-10 w-[140px] h-[140px] border border-[rgba(6,182,212,0.3)] rounded-full bg-black/30 backdrop-blur-sm pointer-events-none z-15">
           <div 
             className="absolute w-1/2 h-1/2 top-0 left-1/2 origin-bottom-left rounded-tr-full animate-[sweep_4s_linear_infinite]"
             style={{
-              background: 'linear-gradient(90deg, transparent, rgba(255,184,0,0.3))'
+              background: 'linear-gradient(90deg, transparent, rgba(6,182,212,0.3))'
             }}
           />
           <div className="absolute w-1 h-1 bg-green-500 rounded-full blur-[1px] animate-[flicker_3s_infinite] top-[30%] left-[40%] shadow-[0_0_5px_#00ff00]" />
-          <div className="absolute w-1 h-1 bg-amber-500 rounded-full blur-[1px] bottom-[40%] right-[30%]" />
+          <div className="absolute w-1 h-1 bg-cyan-500 rounded-full blur-[1px] bottom-[40%] right-[30%]" />
         </div>
 
         <div className="absolute bottom-8 right-8 pointer-events-none">
@@ -320,7 +356,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="absolute bottom-8 left-8 pointer-events-none">
-          <div className="text-[10px] opacity-60 tracking-widest border-l-2 border-amber-500 pl-3 font-mono">
+          <div className="text-[10px] opacity-60 tracking-widest border-l-2 border-cyan-500 pl-3 font-mono">
             <div className="mb-1">SYS_TIME: <span>{sysTime}</span></div>
             <div>LAT: 44.092 // LON: -12.441</div>
             <div>CLEARANCE: PENDING</div>
@@ -328,7 +364,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="absolute top-8 left-8 pointer-events-none">
-          <div className="border border-amber-500/30 p-2 bg-black/40 backdrop-blur-sm">
+          <div className="border border-cyan-500/30 p-2 bg-black/40 backdrop-blur-sm">
             <div className="text-[9px] opacity-60 uppercase tracking-widest">REGISTRATION_STATUS</div>
             <div className="text-xs text-green-500 font-bold tracking-wider">ACCEPTING // SECURE</div>
           </div>
@@ -346,6 +382,11 @@ export default function RegisterPage() {
             transform: scale(1);
             opacity: 1;
           }
+        }
+
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes sweep {
@@ -369,3 +410,5 @@ export default function RegisterPage() {
     </div>
   );
 }
+
+export default RegisterPage;

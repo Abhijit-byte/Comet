@@ -26,13 +26,27 @@ export default function Home() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0e27] via-[#1a1a2e] to-[#16213e] relative">
-      {/* Background Effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-violet-500/10 rounded-full blur-3xl" />
+    <div className="min-h-screen relative overflow-hidden text-slate-200 selection:bg-cyan-500/30">
+      {/* Background Video */}
+      <div className="fixed inset-0 z-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="h-full w-full object-cover"
+        >
+          <source src="/media/15562120-hd_1920_1080_24fps.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px]" />
       </div>
 
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="relative z-10"
+      >
       {/* Top Header */}
       <div className="relative border-b border-cyan-500/20 bg-black/40 backdrop-blur-md z-40">
         <div className="mx-auto max-w-full px-4 py-4 sm:px-6 lg:px-8">
@@ -53,7 +67,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">
-                    Cosmic Watch
+                    CosmosTrace
                   </h1>
                   <p className="text-xs text-cyan-300/60">NEO Command Center</p>
                 </div>
@@ -192,7 +206,7 @@ export default function Home() {
                       transition={{ duration: 0.6, delay: 0.3 }}
                       className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-cyan-300 via-blue-300 to-violet-300 bg-clip-text text-transparent"
                     >
-                      Cosmic Watch
+                      CosmosTrace
                     </motion.h1>
 
                     <motion.p
@@ -253,6 +267,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      </motion.div>
     </div>
   )
 }

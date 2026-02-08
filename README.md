@@ -1,4 +1,4 @@
-# Cosmic Watch - NEO Tracker
+# CosmosTrace - NEO Tracker
 
 A complete real-time Near-Earth Object (NEO) monitoring system powered by NASA's API.
 
@@ -207,7 +207,7 @@ Ensure your hosting provider supports:
    - Click **Import**
 
 3. **Select Environment**
-   - In the environment dropdown (top-right), select **Cosmic Watch - Development**
+   - In the environment dropdown (top-right), select **CosmosTrace - Development**
 
 ### Quick Start - Authentication Flow
 
@@ -305,7 +305,7 @@ All endpoints include automated test scripts that:
 Run all tests:
 1. Open **Collection** (left sidebar)
 2. Click **▶ Run** button
-3. Select **Cosmic Watch - Development** environment
+3. Select **CosmosTrace - Development** environment
 4. Click **Run CosmicWatch**
 
 ## License

@@ -1,7 +1,7 @@
-# Finding Asteroids in Cosmic Watch
+# Finding Asteroids in CosmosTrace
 
 ## Overview
-Cosmic Watch now has **multiple ways** to find asteroids, including famous asteroids like Eros, Apophis, Bennu, and thousands of others from the NASA database.
+CosmosTrace now has **multiple ways** to find asteroids, including famous asteroids like Eros, Apophis, Bennu, and thousands of others from the NASA database.
 
 ## Search Methods
 

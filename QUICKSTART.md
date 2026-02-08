@@ -1,4 +1,4 @@
-# Cosmic Watch - Quick Start Guide
+# CosmosTrace - Quick Start Guide
 
 ## 5-Minute Setup
 

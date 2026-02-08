@@ -27,7 +27,7 @@ export default function Chat() {
       id: '0',
       role: 'assistant',
       content:
-        'Cosmic Watch AI Online. I can assist with asteroid data analysis, NEO tracking explanations, and asteroid impact assessment. What queries do you have?',
+        'CosmosTrace AI Online. I can assist with asteroid data analysis, NEO tracking explanations, and asteroid impact assessment. What queries do you have?',
       timestamp: new Date(),
     },
   ])

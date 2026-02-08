@@ -1,4 +1,4 @@
-# Cosmic Watch - Django Version
+# CosmosTrace - Django Version
 
 A production-ready Django application for real-time NEO (Near-Earth Object) monitoring with user authentication, customizable alerts, and containerized deployment.
 

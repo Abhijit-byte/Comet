@@ -1,5 +1,5 @@
 """
-DRF Serializers for Cosmic Watch API.
+DRF Serializers for CosmosTrace API.
 """
 from rest_framework import serializers
 from django.contrib.auth.models import User

@@ -1,4 +1,4 @@
-# Quick Reference: Finding Asteroids in Cosmic Watch
+# Quick Reference: Finding Asteroids in CosmosTrace
 
 ## 🚀 Finding Asteroids - 3 Easy Ways
 

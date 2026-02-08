@@ -1,5 +1,5 @@
 """
-URL Configuration for Cosmic Watch Tracker API.
+URL Configuration for CosmosTrace Tracker API.
 """
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
@@ -27,4 +27,7 @@ urlpatterns = [
     
     # Router URLs
     path('', include(router.urls)),
+    
+    path("api/community/", include("community.urls")),
+
 ]

@@ -1,4 +1,4 @@
-# API Testing Summary - Cosmic Watch
+# API Testing Summary - CosmosTrace
 
 Generated: February 7, 2026
 
@@ -102,7 +102,7 @@ chmod +x test-api.sh
 1. Open Postman
 2. Import: postman/CosmicWatch.postman_collection.json
 3. Import: postman/CosmicWatch.postman_environment.json
-4. Select "Cosmic Watch - Development" environment
+4. Select "CosmosTrace - Development" environment
 5. Run "Authentication → Obtain Token (Login)"
 6. All endpoints now authenticated automatically
 ```

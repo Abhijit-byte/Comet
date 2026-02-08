@@ -1,14 +1,16 @@
 """
-Django settings for Cosmic Watch project.
+Django settings for CosmosTrace project.
 """
 import os
 from pathlib import Path
+
 
 # Import for Railway DATABASE_URL support
 try:
     import dj_database_url
 except ImportError:
     dj_database_url = None
+
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,6 +37,8 @@ INSTALLED_APPS = [
     'django_celery_results',
     'tracker',
 ]
+INSTALLED_APPS += ["community"]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -152,15 +156,15 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:8000').split(',')
 
 # Celery Configuration
-CELERY_BROKER_URL = os.environ["REDIS_URL"]
-CELERY_RESULT_BACKEND = os.environ["REDIS_URL"]
+CELERY_BROKER_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
+CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL", "redis://localhost:6379")
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
 
 # Redis Configuration
-REDIS_URL = os.environ.get("REDIS_URL")
+REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
 # NASA API Configuration
 NASA_API_KEY = os.environ.get('NASA_API_KEY', 'BtS3sRoAXOeRx0YS8M5EjFUYvblVAJd6CZy3mulD')
 NASA_BASE_URL = 'https://api.nasa.gov/neo/rest/v1'

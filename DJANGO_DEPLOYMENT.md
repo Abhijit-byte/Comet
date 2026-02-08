@@ -1,7 +1,7 @@
-# Cosmic Watch Django Deployment Guide
+# CosmosTrace Django Deployment Guide
 
 ## Overview
-This guide covers deploying the Cosmic Watch Django application with Docker, PostgreSQL, Redis, Celery, and WebSocket support.
+This guide covers deploying the CosmosTrace Django application with Docker, PostgreSQL, Redis, Celery, and WebSocket support.
 
 ## Prerequisites
 - Docker and Docker Compose installed

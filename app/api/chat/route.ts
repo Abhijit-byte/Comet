@@ -111,7 +111,7 @@ export async function POST(request: Request) {
       lastMessage.toLowerCase().includes('help')
     ) {
       const response =
-        'Hello! I\'m your Cosmic Watch assistant. I can help you with:\n\n' +
+        'Hello! I\'m your CosmosTrace assistant. I can help you with:\n\n' +
         '• Search for specific asteroids (e.g., "Tell me about Apophis")\n' +
         '• Explain asteroid characteristics (size, velocity, hazard level)\n' +
         '• Discuss NEO tracking and impact risks\n' +

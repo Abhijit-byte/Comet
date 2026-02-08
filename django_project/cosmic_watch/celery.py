@@ -1,5 +1,5 @@
 """
-Celery configuration for Cosmic Watch project.
+Celery configuration for CosmosTrace project.
 """
 import os
 from celery import Celery

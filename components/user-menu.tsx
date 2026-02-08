@@ -16,7 +16,25 @@ export default function UserMenu() {
   }
 
   if (!isAuthenticated || !user) {
-    return null;
+    return (
+      <div className="flex items-center gap-2 px-3 py-2 glass rounded-lg border border-red-500/30 hover:border-red-400/50 transition-all duration-300">
+        <div className="flex items-center gap-2 pr-2 border-r border-red-500/20">
+          <Shield className="w-4 h-4 text-red-400" />
+          <div className="flex flex-col">
+            <span className="text-xs font-mono text-red-300 font-semibold">
+              GUEST_MODE
+            </span>
+          </div>
+        </div>
+        <button
+          onClick={logout}
+          className="p-2 hover:bg-red-500/20 rounded transition-all duration-300 hover:scale-110 group"
+          title="Return to Login"
+        >
+          <LogOut className="w-4 h-4 text-red-400 group-hover:text-red-300" />
+        </button>
+      </div>
+    );
   }
 
   return (

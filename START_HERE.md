@@ -1,4 +1,4 @@
-# 🌌 COSMIC WATCH - START HERE
+# 🌌 COSMOSTRACE - START HERE
 
 **Welcome to your complete NEO tracking application!**
 

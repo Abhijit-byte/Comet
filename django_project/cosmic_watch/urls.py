@@ -1,5 +1,5 @@
 """
-URL Configuration for Cosmic Watch project.
+URL Configuration for CosmosTrace project.
 """
 from django.contrib import admin
 from django.urls import path, include

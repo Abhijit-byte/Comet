@@ -1,6 +1,6 @@
-# Cosmic Watch API Testing Guide
+# CosmosTrace API Testing Guide
 
-Complete guide to testing the Cosmic Watch Django REST API with cURL and Postman.
+Complete guide to testing the CosmosTrace Django REST API with cURL and Postman.
 
 ## Base URL
 ```

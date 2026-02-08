@@ -1,6 +1,6 @@
-# Cosmic Watch API Reference & Testing Guide
+# CosmosTrace API Reference & Testing Guide
 
-Complete documentation and testing examples for all Cosmic Watch Next.js API endpoints.
+Complete documentation and testing examples for all CosmosTrace Next.js API endpoints.
 
 ---
 
@@ -563,8 +563,8 @@ Invoke-RestMethod -Uri 'http://localhost:3000/api/chat' `
 Save this as `test-api.ps1`:
 
 ```powershell
-# Cosmic Watch API Testing Script
-Write-Host "🌌 Cosmic Watch API Testing Suite" -ForegroundColor Cyan
+# CosmosTrace API Testing Script
+Write-Host "🌌 CosmosTrace API Testing Suite" -ForegroundColor Cyan
 Write-Host "=================================" -ForegroundColor Cyan
 
 $baseUrl = "http://localhost:3000"
@@ -684,8 +684,8 @@ Save this as `test-api.sh`:
 ```bash
 #!/bin/bash
 
-# Cosmic Watch API Testing Script
-echo "🌌 Cosmic Watch API Testing Suite"
+# CosmosTrace API Testing Script
+echo "🌌 CosmosTrace API Testing Suite"
 echo "================================="
 
 BASE_URL="http://localhost:3000"

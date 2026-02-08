@@ -1,8 +1,8 @@
 @echo off
-REM Cosmic Watch Django Setup Script for Windows
+REM CosmosTrace Django Setup Script for Windows
 
 echo ==========================================
-echo Cosmic Watch Django Setup
+echo CosmosTrace Django Setup
 echo ==========================================
 echo.
 

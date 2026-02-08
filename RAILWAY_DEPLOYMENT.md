@@ -1,5 +1,5 @@
 # ============================================
-# COSMIC WATCH - RAILWAY DEPLOYMENT GUIDE
+# COSMOSTRACE - RAILWAY DEPLOYMENT GUIDE
 # ============================================
 
 ## 📦 **Step 1: Install Required Package**
@@ -23,7 +23,7 @@ dj-database-url==2.1.0
 3. Click "New Project"
 4. Select "Deploy from GitHub repo"
 5. Connect your GitHub account
-6. Select your Cosmic Watch repository
+6. Select your CosmosTrace repository
 
 ## 🗄️ **Step 3: Add PostgreSQL Database**
 
@@ -242,4 +242,4 @@ Deploy frontend to:
 
 ---
 
-**🚀 Your Cosmic Watch backend is now live on Railway with PostgreSQL!**
+**🚀 Your CosmosTrace backend is now live on Railway with PostgreSQL!**
