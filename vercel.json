@@ -1,0 +1,6 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "envPrefix": "NEXT_PUBLIC_",
+  "ignoreCommand": "git check-ignore -q $VERCEL_FILE_PATH || echo 'not ignored'"
+}

@@ -1,0 +1,10 @@
+django_project/
+requirements.txt
+Dockerfile
+docker-compose.yml
+*.sql
+.git
+.github
+node_modules
+.env
+.env.local
