@@ -27,7 +27,4 @@ urlpatterns = [
     
     # Router URLs
     path('', include(router.urls)),
-    
-    path("api/community/", include("community.urls")),
-
 ]

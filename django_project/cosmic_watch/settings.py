@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django_celery_results',
     'tracker',
 ]
-INSTALLED_APPS += ["community"]
 
 
 MIDDLEWARE = [

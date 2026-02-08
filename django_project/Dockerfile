@@ -14,11 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --upgrade pip setuptools wheel && pip install -r requirements.txt
 
-# Copy ONLY Django backend
-COPY django_project /app/django_project
-
-# Move into Django root (important)
-WORKDIR /app/django_project
+# Copy Django project files (current directory is django_project)
+COPY . /app
 
 # Non-root user
 RUN useradd -m appuser && chown -R appuser /app
